@@ -1,5 +1,5 @@
 name: sigrok-ali1234
-version: 0
+version: 1
 summary: Logic analyzer and protocol decoder software suite.
 description: |
   sigrok is a portable logic analyzer software that supports various logic

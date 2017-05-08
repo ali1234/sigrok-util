@@ -1,0 +1,70 @@
+name: sigrok-ali1234
+version: 0
+summary: Logic analyzer and protocol decoder software suite.
+description: |
+  sigrok is a portable logic analyzer software that supports various logic
+  analyzer hardware, input formats, output formats, and protocol decoders.
+  
+  PulseView is a GUI for sigrok that supports logic analyzers, oscilloscopes,
+  and MSOs.
+  
+  It can acquire samples from a supported device and display them,
+  load and display captures from existing sigrok *.sr files, as well
+  as run protocol decoders and display their annotations.
+  
+  sigrok-cli is a command-line data acquisition and protocol decoding software.
+  
+  It supports sample acquisition from logic analyzer, oscilloscope,
+  multimeter, and other hardware, as well as running protocol decoders over
+  the sample data (either from hardware or loaded from files).
+
+confinement: strict
+
+
+apps:
+  sigrok-cli:
+    command: data-dir-wrapper sigrok-cli
+    plugs: [raw-usb, serial-port, network]
+  pulseview:
+    command: desktop-launch data-dir-wrapper pulseview
+    plugs: [raw-usb, serial-port, network, x11]
+
+parts:
+
+  libserialport:
+    source: git://sigrok.org/libserialport
+    plugin: autotools
+
+  libsigrok:
+    source: git://sigrok.org/libsigrok
+    plugin: autotools
+    after: [libserialport]
+
+  libsigrokdecode:
+    source: git://sigrok.org/libsigrokdecode
+    plugin: autotools
+    after: [libsigrok]
+
+  sigrok-firmware:
+    source: git://sigrok.org/sigrok-firmware
+    plugin: autotools
+
+  sigrok-firmware-fx2lafw:
+    source: git://sigrok.org/sigrok-firmware-fx2lafw
+    plugin: autotools
+
+  sigrok-cli:
+    source: git://sigrok.org/sigrok-cli
+    plugin: autotools
+    after: [libsigrokdecode]
+
+  pulseview:
+    source: git://sigrok.org/pulseview
+    plugin: cmake
+    after: [libsigrokdecode, desktop/qt5]
+
+  copy:
+    plugin: copy
+    files:
+      data-dir-wrapper: bin/data-dir-wrapper
+    
